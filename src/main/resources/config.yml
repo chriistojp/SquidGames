@@ -1,0 +1,9 @@
+messages:
+  alreadyRunning: "&c&lGame | &7The game is already running!"
+  noPermission: "&c&lGame | &7You do not have permission to do that!"
+  gameStarted: "&c&lGame | &7Squidgame has started! /game join squidgame to join!"
+  alreadyStarted: "&c&lGame | &7The game has already started!"
+  locationSet: "&c&lGame | &7The teleport location has been set!"
+  joinSuccess: "&c&LGame | &7You have successfully joined the game!"
+teleportLocation:
+  location:

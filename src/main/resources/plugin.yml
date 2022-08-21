@@ -1,0 +1,9 @@
+name: SquidGame
+version: ${project.version}
+main: me.christo.squidgame.Main
+api-version: 1.17
+authors: [ Christo ]
+description: Squidgame. Red light Green light.
+website: https://devchristo.com
+commands:
+  game:
