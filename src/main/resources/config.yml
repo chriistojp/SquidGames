@@ -5,5 +5,7 @@ messages:
   alreadyStarted: "&c&lGame | &7The game has already started!"
   locationSet: "&c&lGame | &7The teleport location has been set!"
   joinSuccess: "&c&LGame | &7You have successfully joined the game!"
+  redLight: "&c&lGame | &7Stop! &cRed light!"
+  greenLight: "&c&lGame | &7Go! &aGreen light!"
 teleportLocation:
   location:

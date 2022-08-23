@@ -2,6 +2,7 @@ package me.christo.squidgame.Events;
 
 
 import me.christo.squidgame.Main;
+import me.christo.squidgame.Managers.DeathAnimationManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -21,7 +22,10 @@ public class MoveEvent implements Listener {
                 double z = location.getZ();
                 Location newLocation = new Location(e.getPlayer().getWorld(), x, y, z);
                 if(location.getBlock().getType() == Material.RED_TERRACOTTA) {
-                    //death aminmation
+                    DeathAnimationManager.playDeathAnimation(e.getPlayer());
+                    //execute death command
+                    Main.getGamePlayerList().remove(e.getPlayer());
+
 
                 }
             }

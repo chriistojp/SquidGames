@@ -7,3 +7,4 @@ description: Squidgame. Red light Green light.
 website: https://devchristo.com
 commands:
   game:
+  deathtest:
