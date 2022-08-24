@@ -7,5 +7,11 @@ messages:
   joinSuccess: "&c&LGame | &7You have successfully joined the game!"
   redLight: "&c&lGame | &7Stop! &cRed light!"
   greenLight: "&c&lGame | &7Go! &aGreen light!"
+  positionOneSet: "&c&lGame | &7Position one has been set!"
+  positionTwoSet: "&c&lGame | &7Position two has been set!"
 teleportLocation:
   location:
+  pos1:
+  pos2:
+deathCommands:
+  - "say hi"

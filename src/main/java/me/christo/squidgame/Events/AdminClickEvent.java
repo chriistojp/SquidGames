@@ -1,20 +1,20 @@
 package me.christo.squidgame.Events;
 
 
-import com.fastasyncworldedit.core.FaweAPI;
-import com.fastasyncworldedit.core.util.TaskManager;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.EditSessionBuilder;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.function.pattern.RandomPattern;
-import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.World;
-import com.sk89q.worldedit.world.block.BlockState;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
+//import com.fastasyncworldedit.core.FaweAPI;
+//import com.fastasyncworldedit.core.util.TaskManager;
+//import com.sk89q.worldedit.EditSession;
+//import com.sk89q.worldedit.EditSessionBuilder;
+//import com.sk89q.worldedit.bukkit.BukkitAdapter;
+//import com.sk89q.worldedit.bukkit.BukkitWorld;
+//import com.sk89q.worldedit.function.pattern.RandomPattern;
+//import com.sk89q.worldedit.regions.Region;
+//import com.sk89q.worldedit.world.World;
+//import com.sk89q.worldedit.world.block.BlockState;
+//import com.sk89q.worldguard.WorldGuard;
+//import com.sk89q.worldguard.protection.managers.RegionManager;
+//import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+//import com.sk89q.worldguard.protection.regions.RegionContainer;
 import me.christo.squidgame.Main;
 import me.christo.squidgame.Utils;
 import org.bukkit.Bukkit;
@@ -31,57 +31,95 @@ import java.util.regex.Pattern;
 
 public class AdminClickEvent implements Listener {
 
+
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
-        if (Main.getGameStatus()) {
-            if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-                if (e.getItem().getType() == Material.LIME_DYE && e.getItem().getItemMeta().getDisplayName().equals(Utils.color(
-                        "&aGreen Light"))) {
+        try {
+            if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 
-                    changeColor(e.getPlayer(), "green");
-                    Bukkit.broadcastMessage(Utils.message("greenLight"));
+                if (e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+                    e.setCancelled(true);
+                    if (e.getItem().getType().equals(Material.STICK)) {
+                        if (e.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Utils.color("&6Positions Selector"))) {
+                            Main.getInstance().getConfig().set("locations.pos1", e.getClickedBlock().getLocation());
+                            e.getPlayer().sendMessage(Utils.message("positionOneSet"));
+                        }
+                    }
+                }
+                if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                    if (e.getItem().getType().equals(Material.STICK)) {
+                        if (e.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Utils.color("&6Positions Selector"))) {
+                            Main.getInstance().getConfig().set("locations.pos2", e.getClickedBlock().getLocation());
+                            e.getPlayer().sendMessage(Utils.message("positionTwoSet"));
+                        }
+                    }
+                }
 
-                    //code here
-                    if (e.getItem().getType() == Material.RED_DYE && e.getItem().getItemMeta().getDisplayName().equals(Utils.color(
-                            "&cRed Light"))) {
 
-                        changeColor(e.getPlayer(), "red");
-                        Bukkit.broadcastMessage(Utils.message("redLight"));
+            }
+            System.out.println("1");
+            if (Main.getGameStatus()) {
+                System.out.println("2");
+                System.out.println(e.getAction());
+                if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+
+                    System.out.println("yes");
+                    try {
+
+
+                        if (e.getItem().getType() == Material.GREEN_DYE && e.getItem().getItemMeta().getDisplayName().equals(Utils.color(
+                                "&aGreen Light"))) {
+
+                            changeColor(Main.getInstance().getConfig().getLocation("locations.pos1"), Main.getInstance().getConfig().getLocation("locations.pos2"), Material.GREEN_TERRACOTTA);
+                            Bukkit.broadcastMessage(Utils.message("greenLight"));
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "blockclock start squidgame");
+
+                            Main.setRedStatus(false);
+                            //code here
+                        }
+                        if (e.getItem().getType() == Material.RED_DYE && e.getItem().getItemMeta().getDisplayName().equals(Utils.color(
+                                "&cRed Light"))) {
+
+                            changeColor(Main.getInstance().getConfig().getLocation("locations.pos1"), Main.getInstance().getConfig().getLocation("locations.pos2"), Material.RED_TERRACOTTA);
+                            Bukkit.broadcastMessage(Utils.message("redLight"));
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "blockclock stop squidgame");
+
+                            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                                Main.setRedStatus(true);
+                            }, 20);
+
+                        }
+                    } catch (NullPointerException exc) {
 
                     }
                 }
             }
+        } catch (NullPointerException exception) {
         }
-    }
-
-    public void changeColor(Player p, String color) {
-
-        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        World world = new BukkitWorld(Bukkit.getWorld(p.getWorld().getName()));
-        RegionManager regions = container.get(world);
-        ProtectedRegion r = regions.getRegion("squidgame");
+        }
 
 
-        for (int x = r.getMinimumPoint().getBlockX(); x < r.getMaximumPoint().getBlockX() + 1; x++) {
-            for (int y = r.getMinimumPoint().getBlockY(); y < r.getMaximumPoint().getBlockY()
-                    + 1; y++) {
-                for (int z = r.getMinimumPoint().getBlockZ(); z < r.getMaximumPoint().getBlockZ()
-                        + 1; z++) {
+        private void changeColor(Location start, Location end, Material m) {
+            int topBlockX = (start.getBlockX() < end.getBlockX() ? end.getBlockX() : start.getBlockX());
+            int bottomBlockX = (start.getBlockX() > end.getBlockX() ? end.getBlockX() : start.getBlockX());
 
-                    if(color.equals("red")) {
-                        p.getWorld().getBlockAt(new Location(p.getWorld(), x, y, z)).setType(Material.RED_TERRACOTTA);
+            int topBlockY = (start.getBlockY() < end.getBlockY() ? end.getBlockY() : start.getBlockY());
+            int bottomBlockY = (start.getBlockY() > end.getBlockY() ? end.getBlockY() : start.getBlockY());
+
+            int topBlockZ = (start.getBlockZ() < end.getBlockZ() ? end.getBlockZ() : start.getBlockZ());
+            int bottomBlockZ = (start.getBlockZ() > end.getBlockZ() ? end.getBlockZ() : start.getBlockZ());
+
+            for(int x = bottomBlockX; x <= topBlockX; x++)
+            {
+                for(int z = bottomBlockZ; z <= topBlockZ; z++)
+                {
+                    for(int y = bottomBlockY; y <= topBlockY; y++)
+                    {
+                        Block block = start.getWorld().getBlockAt(x, y, z);
+                        block.setType(m);
                     }
-                    if(color.equals("green")) {
-                        p.getWorld().getBlockAt(new Location(p.getWorld(), x, y, z)).setType(Material.GREEN_TERRACOTTA);
-                    }
-
                 }
             }
         }
 
-
-
-
     }
-
-}
